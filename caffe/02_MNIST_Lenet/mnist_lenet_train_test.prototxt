@@ -9,10 +9,10 @@ layer {
     scale: 0.00390625
   }
   image_data_param {
-    source: "/home/jorge/data/training/mnist/train/train.txt"
+    source: "/home/ubuntu/data/training/mnist/train/train.txt"
     is_color: false
     batch_size: 60
-    root_folder: "/home/jorge/data/training/mnist/"
+    root_folder: "/home/ubuntu/data/training/mnist/"
  }  
 }
 
@@ -26,10 +26,10 @@ layer {
     scale: 0.00390625
   }
   image_data_param {
-    source: "/home/jorge/data/training/mnist/test/test.txt"
+    source: "/home/ubuntu/data/training/mnist/test/test.txt"
     is_color: false
     batch_size: 100
-    root_folder: "/home/jorge/data/training/mnist/"
+    root_folder: "/home/ubuntu/data/training/mnist/"
   }  
 }
 
