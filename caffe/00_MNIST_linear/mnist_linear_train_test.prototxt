@@ -37,10 +37,10 @@ layer {
 }
 
 layer {
-  name: "ip"
+  name: "ip2"
   type: "InnerProduct"
   bottom: "data"
-  top: "ip"
+  top: "ip2"
   param {
     lr_mult: 1
   }
@@ -61,14 +61,14 @@ layer {
 layer {
   name: "accuracy"
   type: "Accuracy"
-  bottom: "ip"
+  bottom: "ip2"
   bottom: "label"
   top: "accuracy"
 }
 layer {
   name: "loss"
   type: "SoftmaxWithLoss"
-  bottom: "ip"
+  bottom: "ip2"
   bottom: "label"
   top: "loss"
 }
