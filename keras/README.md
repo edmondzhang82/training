@@ -1,4 +1,4 @@
 # Keras examples
 
-    - Character level languaje model
+    - Character level language model
     - Sentiment model
