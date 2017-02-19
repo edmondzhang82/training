@@ -12,18 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+
 import os
 import tensorflow as tf
 import urllib
 
-LOGDIR = '/home/ubuntu/data/training/tensorflow/mnist_tutorial/'
-GIST_URL = 'https://gist.githubusercontent.com/dandelionmane/4f02ab8f1451e276fea1f165a20336f1/raw/dfb8ee95b010480d56a73f324aca480b3820c180/'
+LOGDIR = '/tmp/tensorflow/mnist_tutorial/'
+GIST_URL = 'https://raw.githubusercontent.com/sueiras/training/master/tensorflow/tensorboard_example/'
 
 ### MNIST EMBEDDINGS ###
 mnist = tf.contrib.learn.datasets.mnist.read_data_sets(train_dir=LOGDIR + 'data', one_hot=True)
 ### Get a sprite and labels file for the embedding projector ###
-urllib.urlretrieve(GIST_URL + 'labels_1024.tsv', LOGDIR + 'labels_1024.tsv')
-urllib.urlretrieve(GIST_URL + 'sprite_1024.png', LOGDIR + 'sprite_1024.png')
+urllib.request.urlretrieve(GIST_URL + 'labels_1024.tsv', LOGDIR + 'labels_1024.tsv')
+urllib.request.urlretrieve(GIST_URL + 'sprite_1024.png', LOGDIR + 'sprite_1024.png')
 
 
 def conv_layer(input, size_in, size_out, name="conv"):
@@ -130,16 +131,16 @@ def make_hparam_string(learning_rate, use_two_fc, use_two_conv):
 
 def main():
   # You can try adding some more learning rates
-  for learning_rate in [1E-4]:
+  for learning_rate in [1E-3, 1E-4, 1E-5]:
 
     # Include "False" as a value to try different model architectures
-    for use_two_fc in [True]:
-      for use_two_conv in [True]:
+    for use_two_fc in [True, False]:
+      for use_two_conv in [True, False]:
         # Construct a hyperparameter string for each one (example: "lr_1E-3,fc=2,conv=2)
         hparam = make_hparam_string(learning_rate, use_two_fc, use_two_conv)
         print('Starting run for %s' % hparam)
 
-	    # Actually run with the new settings
+        # Actually run with the new settings
         mnist_model(learning_rate, use_two_fc, use_two_conv, hparam)
 
 
