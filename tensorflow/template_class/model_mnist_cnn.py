@@ -21,7 +21,7 @@ class mnistCNN(object):
         self.predictions = tf.argmax(self.dense_2, 1, name="predictions")
         
         # Loss function
-        self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.dense_2, self.input_y))
+        self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=self.dense_2, labels=self.input_y))
         
         # Accuracy
         correct_predictions = tf.equal(self.predictions, tf.argmax(self.input_y, 1))
