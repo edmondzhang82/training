@@ -17,7 +17,7 @@ import os
 import tensorflow as tf
 import urllib
 
-LOGDIR = '/tmp/tensorflow/mnist_tutorial/'
+LOGDIR = '/tmp/tensorboard_example/'
 GIST_URL = 'https://raw.githubusercontent.com/sueiras/training/master/tensorflow/tensorboard_example/'
 
 ### MNIST EMBEDDINGS ###
