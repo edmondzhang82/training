@@ -17,11 +17,15 @@ import os
 import tensorflow as tf
 import urllib
 
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+
+
 LOGDIR = '/tmp/tensorboard_example/'
 GIST_URL = 'https://raw.githubusercontent.com/sueiras/training/master/tensorflow/tensorboard_example/'
 
 ### MNIST EMBEDDINGS ###
-mnist = tf.contrib.learn.datasets.mnist.read_data_sets(train_dir=LOGDIR + 'data', one_hot=True)
+mnist = tf.contrib.learn.datasets.mnist.read_data_sets('/home/ubuntu/data/training/image/mnist', one_hot=True)
 ### Get a sprite and labels file for the embedding projector ###
 urllib.request.urlretrieve(GIST_URL + 'labels_1024.tsv', LOGDIR + 'labels_1024.tsv')
 urllib.request.urlretrieve(GIST_URL + 'sprite_1024.png', LOGDIR + 'sprite_1024.png')
