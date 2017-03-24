@@ -1,6 +1,6 @@
 # Training materials for deep learning
 
-## List of reosurces and use cases
+## List of resources and use cases
 
 ### Caffe examples
     - Intro to caffe
@@ -9,6 +9,12 @@
     - 02_MNIST_Lenet
 
 ### Keras examples
+    - Intro to Keras
+    - 01_char_languaje_model
+    - 02_sentiment_model
+    - 99_utils
+
+### Keras 2.0 examples
     - Intro to Keras
     - 01_char_languaje_model
     - 02_sentiment_model
@@ -57,22 +63,12 @@ Install anaconda
 
     https://repo.continuum.io/archive/Anaconda3-4.3.0.1-Windows-x86_64.exe
 
-Create a Keras 1.2 environment over tensorflow 0.12 and python 3.5 
-
-    conda create -n keras python=3.5
-    activate keras
-    conda install -c conda-forge matplotlib=1.5.3
-    conda install mkl
-    conda install scipy
-    pip install  --upgrade https://storage.googleapis.com/tensorflow/windows/cpu/tensorflow-0.12.1-cp35-cp35m-win_amd64.whl
-    pip install keras
-    pip install jupyter
-
-Create a Tensorflow 1.0 environment
+Create a Tensorflow 1.0 and keras 2.0 environment
 
     conda create -n tensorflow python=3.5
     activate tensorflow
     conda install -c conda-forge matplotlib=1.5.3
     pip install --upgrade tensorflow
+    pip install keras
     pip install jupyter
 
