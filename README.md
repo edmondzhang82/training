@@ -61,14 +61,13 @@ Machine learning course of Stanford in Coursera
 
 Install anaconda
 
-    https://repo.continuum.io/archive/Anaconda3-4.3.0.1-Windows-x86_64.exe
+    https://repo.continuum.io/archive/Anaconda3-4.4.0-Windows-x86_64.exe
+    
+Create a Tensorflow 1.2.1 environment with keras included
 
-Create a Tensorflow 1.0 and keras 2.0 environment
-
-    conda create -n tensorflow python=3.5
-    activate tensorflow
+    conda create -n tf12 python=3.6
+    source activate tf12
     conda install -c conda-forge matplotlib=1.5.3
-    pip install --upgrade tensorflow
-    pip install keras
+    pip install --ignore-installed --upgrade https://storage.googleapis.com/tensorflow/windows/gpu/tensorflow_gpu-1.2.1-cp35-cp35m-win_amd64.whl
     pip install jupyter
-
+    
