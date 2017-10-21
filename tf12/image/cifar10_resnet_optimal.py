@@ -11,7 +11,7 @@ import random
 # Select GPU
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 data_path = '/home/ubuntu/data/training/image/cifar10/'
 
@@ -30,7 +30,7 @@ def residual_layer(input_tensor, nb_in_filters=64, nb_bottleneck_filters=16, fil
 
     # batchnorm-relu-conv, from nb_in_filters to nb_bottleneck_filters via 1x1 conv
     if stage>1: # first activation is just after conv1
-        x = layers.BatchNormalization(axis=1, name=bn_name+'a')(input_tensor)
+        x = layers.BatchNormalization(axis=-1, name=bn_name+'a')(input_tensor)
         x = layers.Activation('relu', name=relu_name+'a')(x)
     else:
         x = input_tensor
@@ -42,7 +42,7 @@ def residual_layer(input_tensor, nb_in_filters=64, nb_bottleneck_filters=16, fil
                       name=conv_name+'a')(x)
 
     # batchnorm-relu-conv, from nb_bottleneck_filters to nb_bottleneck_filters via FxF conv
-    x = layers.BatchNormalization(axis=1, name=bn_name+'b')(x)
+    x = layers.BatchNormalization(axis=-1, name=bn_name+'b')(x)
     x = layers.Activation('relu', name=relu_name+'b')(x)
     x = layers.Conv2D(nb_bottleneck_filters, (filter_sz, filter_sz),
                       padding='same',
@@ -52,7 +52,7 @@ def residual_layer(input_tensor, nb_in_filters=64, nb_bottleneck_filters=16, fil
                       name=conv_name+'b')(x)
 
     # batchnorm-relu-conv, from nb_in_filters to nb_bottleneck_filters via 1x1 conv
-    x = layers.BatchNormalization(axis=1, name=bn_name+'c')(x)
+    x = layers.BatchNormalization(axis=-1, name=bn_name+'c')(x)
     x = layers.Activation('relu', name=relu_name+'c')(x)
     x = layers.Conv2D(nb_in_filters, (1, 1),
                       kernel_initializer='glorot_normal',
@@ -89,7 +89,6 @@ x = layers.Conv2D(sz_ly0_filters, (nb_ly0_filters,nb_ly0_filters),
 x = layers.BatchNormalization(axis=-1, name='bn0')(x)
 x = layers.Activation('relu', name='relu0')(x)
 
-
 # Resnet layers
 for stage in range(1, nb_res_stages+1):
     x = residual_layer(x, 
@@ -115,54 +114,72 @@ model1.summary()
 
 my_datagen = preprocessing.image.ImageDataGenerator()
 
-train_generator = my_datagen.flow_from_directory(
+
+# Augmentation for training
+train_datagen = preprocessing.image.ImageDataGenerator(
+    rescale=1. / 255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
+    height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
+    horizontal_flip=True)
+
+# Augmentation configuration we will use for testing:
+# only rescaling
+test_datagen = preprocessing.image.ImageDataGenerator(rescale=1. / 255)
+
+
+train_generator = train_datagen.flow_from_directory(
     join(data_path, 'train'),
     target_size=(32, 32),
-    batch_size=50000)
+    batch_size=32)
 
 
-test_generator = my_datagen.flow_from_directory(
+test_generator = test_datagen.flow_from_directory(
     join(data_path, 'test'),
     target_size=(32, 32),
-    batch_size=10000)
+    batch_size=32)
 
-
-X_train, y_train = next(train_generator)
-X_test,  y_test  = next(test_generator)
-print('Data loaded!')
-      
-
-# subtract mean and normalize
-mean_image = np.mean(X_train, axis=0)
-X_train -= mean_image
-X_test -= mean_image
-X_train /= 128.
-X_test /= 128.
 
 
 tb_callback_ln = callbacks.TensorBoard(log_dir='/tmp/tensorboard/cifar10/resnet2')
 
 batch_size = 32
-#X_train = X_train[:100]
-#y_train = y_train[:100]
-#X_test  = X_test[:100]
-#y_test  = y_test[:100]
-
+nb_train_samples = 50000
+nb_test_samples = 10000
 
 opt = optimizers.Adam(lr=1E-3)
 model1.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
-history1 = model1.fit(X_train, y_train, batch_size=batch_size, epochs=50,
-                     validation_data=(X_test, y_test), callbacks=[tb_callback_ln])
-
+history1 = model1.fit_generator(
+    train_generator,
+    steps_per_epoch = nb_train_samples // batch_size,
+    epochs = 50,
+    validation_data = test_generator,
+    validation_steps = nb_test_samples // batch_size,
+    callbacks=[tb_callback_ln]
+    )
+    
 opt = optimizers.Adam(lr=1E-4)
 model1.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
-history2 = model1.fit(X_train, y_train, batch_size=batch_size, epochs=25,
-                     validation_data=(X_test, y_test), callbacks=[tb_callback_ln])
+history2 = model1.fit_generator(
+    train_generator,
+    steps_per_epoch = nb_train_samples // batch_size,
+    epochs = 25,
+    validation_data = test_generator,
+    validation_steps = nb_test_samples // batch_size,
+    callbacks=[tb_callback_ln]
+    )
 
 opt = optimizers.Adam(lr=1E-5)
 model1.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
-history3 = model1.fit(X_train, y_train, batch_size=batch_size, epochs=25,
-                     validation_data=(X_test, y_test), callbacks=[tb_callback_ln])
+history3 = model1.fit_generator(
+    train_generator,
+    steps_per_epoch = nb_train_samples // batch_size,
+    epochs = 25,
+    validation_data = test_generator,
+    validation_steps = nb_test_samples // batch_size,
+    callbacks=[tb_callback_ln]
+    )
 
 # Save model
 model1.save('cifar10_resnet_optimal.h5')
